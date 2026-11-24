@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SayItRight — Your Friendly English Coach</title>
+<style>
+:root{--ink:#203047;--muted:#6b7a90;--blue:#356ae6;--pale:#edf3ff;--bg:#f5f7fb;--line:#e5eaf2}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+.wrap{max-width:900px;margin:auto;padding:22px 16px 34px}.hero{display:flex;align-items:center;gap:13px;margin-bottom:18px}
+.logo{width:48px;height:48px;border-radius:15px;background:var(--blue);color:white;display:grid;place-items:center;font-size:25px}
+h1{font-size:22px;margin:0}.sub{color:var(--muted);font-size:14px}
+.layout{display:grid;grid-template-columns:260px 1fr;gap:16px}
+.panel,.chat{background:white;border:1px solid var(--line);border-radius:18px;box-shadow:0 6px 24px #2030470a}
+.panel{padding:18px;height:max-content}.panel h2{font-size:16px;margin:0 0 10px}
+.panel p{font-size:14px;color:var(--muted);margin:0 0 14px}
+.lesson{display:block;width:100%;text-align:left;border:1px solid var(--line);background:white;border-radius:12px;padding:11px 12px;margin:8px 0;color:var(--ink);cursor:pointer}
+.lesson:hover,.lesson.active{border-color:var(--blue);background:var(--pale)}
+.chat{display:flex;flex-direction:column;min-height:620px;overflow:hidden}
+.chathead{padding:15px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.dot{width:10px;height:10px;background:#26b77a;border-radius:50%}.chathead strong{font-size:15px}.chathead small{display:block;color:var(--muted)}
+.messages{padding:18px;display:flex;flex-direction:column;gap:12px;flex:1;overflow:auto;max-height:490px}
+.msg{max-width:88%;padding:11px 14px;border-radius:15px;white-space:pre-wrap;font-size:15px;overflow-wrap:anywhere}
+.bot{background:#f0f3f8;align-self:flex-start;border-bottom-left-radius:5px}
+.user{background:var(--blue);color:white;align-self:flex-end;border-bottom-right-radius:5px}
+.hint{font-size:12px;color:var(--muted);margin-top:5px}
+.quick{display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 12px}
+.quick button{border:1px solid #d8e2f7;background:#f8faff;color:#3159ad;border-radius:20px;padding:7px 11px;cursor:pointer;font-size:13px}
+.entry{border-top:1px solid var(--line);padding:13px;display:flex;gap:8px}
+input{flex:1;min-width:0;border:1px solid #d8dfeb;border-radius:12px;padding:12px;font:inherit;outline:none}
+input:focus{border-color:var(--blue)}.send{border:0;background:var(--blue);color:white;border-radius:12px;padding:0 17px;font-weight:600;cursor:pointer}
+.note{font-size:12px;color:var(--muted);padding:0 16px 14px}
+@media(max-width:680px){.layout{grid-template-columns:1fr}.panel{order:2}.chat{min-height:560px}.messages{max-height:420px}.wrap{padding:16px 12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero"><div class="logo">✦</div><div><h1>SayItRight</h1><div class="sub">Speak confidently. Learn naturally. Say it right!</div></div></header>
+  <main class="layout">
+    <aside class="panel">
+      <h2>Your SayItRight practice menu</h2><p>Choose a topic to start. You can make mistakes here — that's how learning works!</p>
+      <button class="lesson active" data-topic="conversation">💬 Everyday conversation</button>
+      <button class="lesson" data-topic="introductions">👋 Introducing yourself</button>
+      <button class="lesson" data-topic="grammar">✏️ Simple grammar</button>
+      <button class="lesson" data-topic="vocabulary">📚 Useful vocabulary</button>
+      <button class="lesson" data-topic="confidence">🌱 Speak with confidence</button>
+      <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+      <h2>How we'll practice</h2>
+      <p>1. You write a sentence.<br>2. The coach gives a gentle correction.<br>3. You try again with a new example.</p>
+    </aside>
+    <section class="chat">
+      <div class="chathead"><span class="dot"></span><div><strong>EDITH — English Coach</strong><small>Friendly beginner practice</small></div></div>
+      <div class="messages" id="messages" aria-live="polite">
+        <div class="msg bot">Hi! 😊 I’m EDITH, your English coach. I’m happy to practice with you.
+
+Let’s start simply: How was your day today? Try answering in one or two sentences.</div>
+      </div>
+      <div class="quick">
+        <button data-say="Can you correct my sentence?">Correct my sentence</button>
+        <button data-say="Teach me five useful words.">Teach me vocabulary</button>
+        <button data-say="Let's practice introducing myself.">Practice introductions</button>
+      </div>
+      <form class="entry" id="form"><input id="input" autocomplete="off" placeholder="Type your answer in English..." aria-label="Your message"><button class="send" type="submit">Send</button></form>
+      <div class="note">Practice demo: these starter replies work offline. A real AI tutor and live voice conversations still need an online AI connection.</div>
+    </section>
+  </main>
+</div>
+<script>
+const messages=document.getElementById('messages'), input=document.getElementById('input');
+function add(text,who='bot'){const d=document.createElement('div');d.className='msg '+who;d.textContent=text;messages.appendChild(d);messages.scrollTop=messages.scrollHeight}
+function coachReply(raw){
+ const s=raw.trim(), low=s.toLowerCase();
+ if(!s)return 'Type a short sentence and I will help you practice.';
+ if(/^(hi|hello|hey|good morning|good afternoon|good evening)[!. ]*$/.test(low))return 'Hello! 😊 How are you feeling today? Try answering with a complete sentence.';
+ if(/correct|grammar|check my sentence/.test(low))return 'Of course! 😊 Type the sentence you want me to check. I will suggest a more natural version and explain why.';
+ if(/vocabulary|five useful words|new words/.test(low))return 'Here are 5 useful words:\n\n1. Usually — something you do most of the time.\n2. Enjoy — to like doing something.\n3. Practice — to do something again to improve.\n4. Maybe — possibly.\n5. Comfortable — feeling relaxed.\n\nTry this: “I usually practice English at night.”';
+ if(/introduc|my name/.test(low))return 'Great! Try this pattern:\n\n“Hello! My name is ____. I am from ____. I enjoy ____.”\n\nFill in the blanks and send it to me. I will help you improve it.';
+ if(/how are you/.test(low))return 'I am doing well, thank you! 😊 A natural reply is: “I’m good, thanks. How about you?” Now you try asking me a question.';
+ if(/thank/.test(low))return 'You’re very welcome! Keep going — every sentence you practice helps you improve. 😊';
+ if(/\bi am agree\b/i.test(s))return 'A more natural sentence is: “I agree.”\n\nWhy? “Agree” is a verb, so you do not need “am.” Try another sentence using “I agree.”';
+ if(/\bi very happy\b/i.test(s))return 'A better sentence is: “I am very happy” or “I’m very happy.”\n\nWhy? Add “am” before an adjective such as happy, tired, or excited.';
+ if(/\byesterday\b.*\bgo\b/i.test(s))return 'Use the past-tense verb “went.” For example: “Yesterday, I went to school.”\n\nTry writing your sentence again with “went.”';
+ if(/\b(he|she) go\b/i.test(s))return 'With “he” or “she” in the simple present, use “goes.”\n\nExample: “She goes to school every day.”';
+ if(/\bi has\b/i.test(s))return 'Use “I have,” not “I has.”\n\nExample: “I have a book.” Try correcting your sentence.';
+ if(/\bhe have\b|\bshe have\b/i.test(s))return 'With “he” or “she,” use “has.”\n\nExample: “She has a new bag.” Try correcting your sentence.';
+ if(/\bi am\b|\bi'm\b|\bmy day\b|\btoday\b|\byesterday\b/.test(low))return 'Nice effort! 😊 Your sentence is a good start. Try adding a little more detail, such as where it happened, when it happened, or how you felt.';
+ return 'Thanks for sharing! 😊 I understand what you mean. To make your answer stronger, try writing a complete sentence with a subject and a verb. You can also ask me to correct a sentence.';
+}
+document.getElementById('form').addEventListener('submit',e=>{e.preventDefault();const s=input.value.trim();if(!s)return;add(s,'user');input.value='';setTimeout(()=>add(coachReply(s)),250)});
+document.querySelectorAll('[data-say]').forEach(b=>b.addEventListener('click',()=>{input.value=b.dataset.say;document.getElementById('form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}))}));
+const topics={
+ conversation:'Let’s practice everyday conversation. Answer this: What do you usually do in the morning?',
+ introductions:'Let’s introduce ourselves. Complete this: “Hello, my name is ____. I am from ____.”',
+ grammar:'Quick grammar lesson: Use “I am” with feelings and descriptions. Example: “I am happy.” Now write one sentence about how you feel.',
+ vocabulary:'Let’s learn useful words. Write a sentence using the word “enjoy.” Example: “I enjoy listening to music.”',
+ confidence:'Confidence practice: Write one sentence about something you like. Don’t worry about mistakes — I will help you.'
+};
+document.querySelectorAll('.lesson').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.lesson').forEach(x=>x.classList.remove('active'));b.classList.add('active');add(topics[b.dataset.topic])}));
+</script>
+</body>
+</html>
